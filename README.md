@@ -38,5 +38,3 @@ Building these projects required more than just "generating code." It involved:
 - **Integration**: Connecting disparate tools (like Python and Google Docs) into seamless pipelines.
 
 ---
-*Created by [Your Name/GitHub Handle]*
-*Built with Antigravity*
