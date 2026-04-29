@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Straunt LinkedIn Carousel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #C9CDD4;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      align-items: center;
+      padding: 60px 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* ─── SLIDE CONTAINER ─── */
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.22);
+      background-color: #FFFFFF;
+    }
+
+    /* ─── TOP ROW: eyebrow left, counter right ─── */
+    .top-row {
+      position: absolute;
+      top: 72px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .slide-counter {
+      font-size: 24px;
+      font-weight: 600;
+      color: #9CA3AF;
+      letter-spacing: 2px;
+    }
+
+    .slide-counter.light {
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ─── BOTTOM ROW: logo right ─── */
+    .bottom-row {
+      position: absolute;
+      bottom: 72px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .logo.light { color: #FFFFFF; }
+    .logo.orange { color: #FFFFFF; }
+
+    /* ─── SAFE ZONE ─── */
+    .safe-zone {
+      position: absolute;
+      inset: 0;
+      padding: 108px 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    /* ─── EYEBROW PILL ─── */
+    .eyebrow-pill {
+      display: inline-block;
+      background-color: #FFE4C8;
+      color: #F97A34;
+      font-size: 26px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 14px 34px;
+      border-radius: 99px;
+      margin-bottom: 44px;
+      align-self: flex-start;
+    }
+
+    /* On dark slides, pill uses semi-transparent orange tint */
+    .eyebrow-pill.dark-pill {
+      background-color: rgba(249,122,52,0.18);
+      color: #F97A34;
+    }
+
+    /* On orange slide, pill is white with orange text */
+    .eyebrow-pill.white-pill {
+      background-color: rgba(255,255,255,0.25);
+      color: #FFFFFF;
+    }
+
+    /* ─── HEADLINES ─── */
+    .headline {
+      font-size: 104px;
+      font-weight: 800;
+      color: #111111;
+      line-height: 1.0;
+      letter-spacing: -4px;
+      margin-bottom: 48px;
+    }
+
+    .headline-sm {
+      font-size: 72px;
+      font-weight: 800;
+      color: #111111;
+      line-height: 1.06;
+      letter-spacing: -2px;
+      margin-bottom: 36px;
+    }
+
+    .headline.light,
+    .headline-sm.light { color: #FFFFFF; }
+
+    /* ─── ACCENT ─── */
+    .headline em,
+    .headline-sm em {
+      color: #F97A34;
+      font-style: normal;
+    }
+
+    /* Orange slide: em becomes white underlined */
+    .headline.orange-text em {
+      color: #FFFFFF;
+      text-decoration: underline;
+      text-underline-offset: 8px;
+    }
+
+    /* ─── ACCENT BAR ─── */
+    .accent-bar {
+      width: 72px;
+      height: 10px;
+      background-color: #F97A34;
+      border-radius: 5px;
+      margin-bottom: 44px;
+    }
+
+    .accent-bar.light {
+      background-color: rgba(255,255,255,0.5);
+    }
+
+    /* ─── BODY COPY ─── */
+    .body-copy {
+      font-size: 36px;
+      font-weight: 500;
+      color: #4B5563;
+      line-height: 1.65;
+    }
+
+    .body-copy.light { color: rgba(255,255,255,0.80); }
+    .body-copy.white { color: #FFFFFF; }
+
+    /* ─── LEFT BORDER CALLOUT ─── */
+    .indent-bar {
+      border-left: 10px solid #F97A34;
+      padding-left: 36px;
+      margin-top: 40px;
+    }
+
+    .indent-bar.light-border {
+      border-left-color: rgba(255,255,255,0.4);
+    }
+
+    /* ─── STAT NUMBER ─── */
+    .stat-number {
+      font-size: 190px;
+      font-weight: 800;
+      color: #F97A34;
+      line-height: 0.9;
+      letter-spacing: -8px;
+      margin-bottom: 16px;
+    }
+
+    /* On dark, stat is still orange — pops beautifully */
+    .stat-label {
+      font-size: 34px;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 52px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-label.light { color: rgba(255,255,255,0.85); }
+
+    /* ─── CTA BUTTON ─── */
+    .cta-btn {
+      display: inline-block;
+      background-color: #FFFFFF;
+      color: #F97A34;
+      padding: 36px 80px;
+      border-radius: 9999px;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-top: 52px;
+      align-self: flex-start;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+
+    /* ─── SOCIAL PROOF ─── */
+    .social-proof {
+      font-size: 26px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      margin-top: 32px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── DECORATIVE CIRCLES ─── */
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    /* ─── SLIDE 1 DECORATIVE: large cream circle peeking from bottom-right ─── */
+    .s1-circle-br {
+      width: 560px;
+      height: 560px;
+      background-color: #F5F0EB;
+      bottom: -120px;
+      right: -100px;
+    }
+
+    .s1-circle-tl {
+      width: 220px;
+      height: 220px;
+      background-color: #FFE4C8;
+      top: -60px;
+      left: 560px;
+    }
+
+    /* ─── SLIDE 2 DECORATIVE ─── */
+    .s2-circle-tr {
+      width: 480px;
+      height: 480px;
+      background-color: rgba(249,122,52,0.08);
+      top: -80px;
+      right: -80px;
+    }
+
+    .s2-circle-bl {
+      width: 300px;
+      height: 300px;
+      background-color: rgba(249,122,52,0.06);
+      bottom: -60px;
+      left: -60px;
+    }
+
+    /* ─── SLIDE 3 DECORATIVE ─── */
+    .s3-circle-br {
+      width: 500px;
+      height: 500px;
+      background-color: #F5F0EB;
+      bottom: -100px;
+      right: -80px;
+    }
+
+    /* ─── SLIDE 4 DECORATIVE: lighter circles on dark bg ─── */
+    .s4-circle-tl {
+      width: 600px;
+      height: 600px;
+      background-color: rgba(249,122,52,0.06);
+      top: -200px;
+      left: -200px;
+    }
+
+    .s4-circle-br {
+      width: 380px;
+      height: 380px;
+      background-color: rgba(255,255,255,0.03);
+      bottom: -80px;
+      right: -80px;
+    }
+
+    /* ─── SLIDE 5 DECORATIVE: circles on orange ─── */
+    .s5-circle-tl {
+      width: 700px;
+      height: 700px;
+      background-color: rgba(255,255,255,0.08);
+      top: -200px;
+      left: -200px;
+    }
+
+    .s5-circle-br {
+      width: 500px;
+      height: 500px;
+      background-color: rgba(0,0,0,0.06);
+      bottom: -150px;
+      right: -100px;
+    }
+
+    /* ─── COVER SLIDE: Big number "5" watermark ─── */
+    .watermark-5 {
+      position: absolute;
+      font-size: 700px;
+      font-weight: 800;
+      color: rgba(245,240,235,0.8);
+      line-height: 1;
+      bottom: -80px;
+      right: -40px;
+      z-index: 0;
+      letter-spacing: -20px;
+    }
+
+    /* ─── ORANGE SLIDE: large watermark ─── */
+    .watermark-check {
+      position: absolute;
+      font-size: 500px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.06);
+      line-height: 1;
+      bottom: -60px;
+      right: 40px;
+      z-index: 0;
+    }
+
+    /* ─── DIVIDER LINE ─── */
+    .divider {
+      width: 100%;
+      height: 2px;
+      background-color: #E5E7EB;
+      margin: 40px 0;
+    }
+
+    .divider.dark { background-color: rgba(255,255,255,0.08); }
+
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════
+       SLIDE 1 — COVER (Archetype A)
+       BG: White | Decorative: Cream circles + "5" watermark
+       ════════════════════════════════════════════════ -->
+  <div class="slide" style="background-color: #FFFFFF;">
+
+    <!-- Decorative elements (z-index 0, behind content) -->
+    <div class="deco-circle s1-circle-br"></div>
+    <div class="deco-circle s1-circle-tl"></div>
+    <div class="watermark-5">5</div>
+
+    <!-- Top row -->
+    <div class="top-row">
+      <span class="eyebrow-pill" style="margin-bottom:0;">Restaurant OS</span>
+      <span class="slide-counter">01 / 05</span>
+    </div>
+
+    <!-- Content -->
+    <div class="safe-zone" style="justify-content: flex-end; padding-bottom: 200px;">
+      <h1 class="headline" style="font-size:112px;">
+        5 Revenue<br>Leaks <em>Killing</em><br>Your Restaurant
+      </h1>
+      <div class="accent-bar"></div>
+      <p class="body-copy">
+        Stop bleeding profit.<br>Start fixing the tech stack.
+      </p>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <span style="font-size:24px; font-weight:500; color:#9CA3AF;">by straunt.ai</span>
+      <span class="logo">STRAUNT</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════
+       SLIDE 2 — STAT (Archetype B)
+       BG: Cream #F5F0EB | Stat: 40–60%
+       ════════════════════════════════════════════════ -->
+  <div class="slide" style="background-color: #F5F0EB;">
+
+    <div class="deco-circle s2-circle-tr"></div>
+    <div class="deco-circle s2-circle-bl"></div>
+
+    <!-- Top row -->
+    <div class="top-row">
+      <span class="eyebrow-pill" style="margin-bottom:0;">Leak #1</span>
+      <span class="slide-counter">02 / 05</span>
+    </div>
+
+    <!-- Content -->
+    <div class="safe-zone" style="justify-content: center;">
+      <h2 class="headline-sm">
+        Missed Calls =<br>Missed <em>Revenue</em>
+      </h2>
+
+      <div class="divider"></div>
+
+      <p class="stat-number">40–60<span style="font-size:80px; letter-spacing:-2px;">%</span></p>
+      <p class="stat-label">of calls go unanswered during rush hour</p>
+
+      <div class="indent-bar">
+        <p class="body-copy">
+          Every unanswered call is a lost order —<br>and a customer who won't call back.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <span></span>
+      <span class="logo">STRAUNT</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════
+       SLIDE 3 — STAT (Archetype B)
+       BG: White #FFFFFF | Stat: 30%
+       ════════════════════════════════════════════════ -->
+  <div class="slide" style="background-color: #FFFFFF;">
+
+    <div class="deco-circle s3-circle-br"></div>
+
+    <!-- Top row -->
+    <div class="top-row">
+      <span class="eyebrow-pill" style="margin-bottom:0;">Leak #2</span>
+      <span class="slide-counter">03 / 05</span>
+    </div>
+
+    <!-- Content -->
+    <div class="safe-zone" style="justify-content: center;">
+      <h2 class="headline-sm">
+        Marketplace Fees<br>Are <em>Eating</em> Your Margins
+      </h2>
+
+      <div class="divider"></div>
+
+      <p class="stat-number">30<span style="font-size:80px; letter-spacing:-2px;">%</span></p>
+      <p class="stat-label">of every order goes to Uber Eats & DoorDash</p>
+
+      <div class="indent-bar">
+        <p class="body-copy">
+          You lose the revenue <em>and</em> the customer data.<br>
+          They own the relationship — not you.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <span></span>
+      <span class="logo">STRAUNT</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════
+       SLIDE 4 — STAT on DARK (Archetype B variant)
+       BG: Dark Navy #1A1A2E | Stat: 5–10 hrs
+       ════════════════════════════════════════════════ -->
+  <div class="slide" style="background-color: #1A1A2E;">
+
+    <div class="deco-circle s4-circle-tl"></div>
+    <div class="deco-circle s4-circle-br"></div>
+
+    <!-- Top row -->
+    <div class="top-row">
+      <span class="eyebrow-pill dark-pill" style="margin-bottom:0;">Leak #3</span>
+      <span class="slide-counter light">04 / 05</span>
+    </div>
+
+    <!-- Content -->
+    <div class="safe-zone" style="justify-content: center;">
+      <h2 class="headline-sm light">
+        Tablet Chaos Is<br><em>Costing You</em> Hours
+      </h2>
+
+      <div class="divider dark"></div>
+
+      <p class="stat-number">5–10</p>
+      <p class="stat-label light">hours wasted per week on manual ops</p>
+
+      <div class="indent-bar light-border">
+        <p class="body-copy light">
+          3–4 tablets. Manual order entry. Menu syncing<br>
+          across every platform. Your staff's time is<br>
+          being stolen by bad tech.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <span></span>
+      <span class="logo light">STRAUNT</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════
+       SLIDE 5 — CTA (Archetype E on Orange)
+       BG: Straunt Orange #F97A34
+       ════════════════════════════════════════════════ -->
+  <div class="slide" style="background-color: #F97A34;">
+
+    <div class="deco-circle s5-circle-tl"></div>
+    <div class="deco-circle s5-circle-br"></div>
+    <div class="watermark-check">✓</div>
+
+    <!-- Top row -->
+    <div class="top-row">
+      <span class="eyebrow-pill white-pill" style="margin-bottom:0;">The Fix</span>
+      <span class="slide-counter" style="color:rgba(255,255,255,0.5);">05 / 05</span>
+    </div>
+
+    <!-- Content -->
+    <div class="safe-zone" style="justify-content: center;">
+      <h1 class="headline orange-text" style="color:#FFFFFF; font-size:108px;">
+        One Platform.<br><em>Every Fix.</em>
+      </h1>
+
+      <div class="accent-bar light"></div>
+
+      <p class="body-copy white" style="max-width: 760px;">
+        Straunt replaces 5–10 disconnected tools with<br>
+        one AI-powered Restaurant OS. Calls answered.<br>
+        Orders captured. Revenue recovered.
+      </p>
+
+      <div class="cta-btn">Book a Demo →</div>
+
+      <p class="social-proof">700+ restaurants · 15–30% lift in phone orders</p>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <span></span>
+      <span class="logo" style="color:#FFFFFF;">STRAUNT</span>
+    </div>
+  </div>
+
+
+</body>
+</html>
